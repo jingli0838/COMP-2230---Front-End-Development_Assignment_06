@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("trivia-form");
     const questionContainer = document.getElementById("question-container");
     const newPlayerButton = document.getElementById("new-player");
+    const userNameInput = document.getElementById("username");
 
     // Initialize the game
     checkUsername(); //Uncomment once completed
@@ -104,11 +105,14 @@ document.addEventListener("DOMContentLoaded", function () {
     function handleFormSubmit(event) {
         event.preventDefault();
         //... form submission logic including setting cookies and calculating score
+        username = userNameInput.value;
+        value = calculateScore();
+        setCookie(username,value,30);
+        getCookie(username);
+        checkUsername();
     }
     function checkUsername() {
-        //... code for checking if a username cookie is set and adjusting the UI
-        const userNameInput = document.getElementById("username");
-        
+        //... code for checking if a username cookie is set and adjusting the UI  
         if(getCookie(userName)){
             userNameInput.classList.add("hidden");
             newPlayerButton.classList.remove("hidden");
