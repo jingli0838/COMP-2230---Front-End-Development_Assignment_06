@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const newPlayerButton = document.getElementById("new-player");
 
     // Initialize the game
-    // checkUsername(); Uncomment once completed
+    checkUsername(); //Uncomment once completed
     fetchQuestions();
     displayScores();
 
@@ -107,7 +107,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     function checkUsername() {
         //... code for checking if a username cookie is set and adjusting the UI
+        const userNameInput = document.getElementById("username");
+        
+        if(getCookie(userName)){
+            userNameInput.classList.add("hidden");
+            newPlayerButton.classList.remove("hidden");
+        }
     }
+
     function setCookie(name, value, days) {
         //... code for setting a cookie
         let expires = "";
