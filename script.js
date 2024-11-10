@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const questionContainer = document.getElementById("question-container");
     const newPlayerButton = document.getElementById("new-player");
     const userNameInput = document.getElementById("username");
-
+    const tbodyNode = document.querySelector("#score-table tbody");
     // Initialize the game
     checkUsername(); //Uncomment once completed
     fetchQuestions();
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
         questionContainer.innerHTML = ""; // Clear existing questions
         questions.forEach((question, index) => {
             const questionDiv = document.createElement("div");
-            questionDiv.id = `quesion-${index}`;// Add an ID for each questionDiv
+            questionDiv.id = `question-${index}`;// Add an ID for each questionDiv
             questionDiv.innerHTML = `
                 <p>${question.question}</p>
                 ${createAnswerOptions(
@@ -109,25 +109,28 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
         //... form submission logic including setting cookies and calculating score
 
-        nameValue = userNameInput.value;
-        value = calculateScore();
+        const nameValue = userNameInput.value;
         checkUsername();
         const username = getCookie("username");
         if(!username){
-            setCookie("username",nameValue,30);
+            //Calls setCookie if no username cookie is found
+            setCookie("username",nameValue,1);
         };
-        
-        fetchQuestions();
+        //Calculates the current score with calculateScore
         const score = calculateScore();
-        saveScore(getCookie("username"), score);
+        //Saves the score with saveScore.
+        saveScore(nameValue, score);
         displayScores();
-
+        // Checks for the username cookie again with checkUsername to adjust the UI accordingly.
+        checkUsername();
+        // Fetches new questions by calling fetchQuestions for another round.
+        fetchQuestions();
 
     }
     function checkUsername() {
         //... code for checking if a username cookie is set and adjusting the UI 
-
-        if(getCookie("username")){
+        const username = getCookie("username");
+        if(username){
             userNameInput.classList.add("hidden");
             newPlayerButton.classList.remove("hidden");
         }else{
@@ -153,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const pairs = cookieString.split(";");
 
         for(const pair of pairs){
-            const[key, value]=pair.split("=");
+            const[key, value]=pair.trim().split("=");
 
             if(name === key){
                 return value;
@@ -161,39 +164,59 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     function saveScore(username, score) {
-        //... code for saving the score to localStorage
-        localStorage.setItem(username,score);
+         // Retrieve the existing scores for the username, or initialize a new array if none exist
+        const existingScores = JSON.parse(localStorage.getItem(username)) || [];
+
+        // Add the new score to the array
+        existingScores.push(score);
+
+        // Save the updated array back to localStorage
+        localStorage.setItem(username, JSON.stringify(existingScores));
     }
     function newPlayer() {
         //... code for clearing the username cookie and updating the UI
+        
+        setCookie("username", "", -1);
+        checkUsername();  
+        console.log("New player initialized. Username cookie cleared.");
     }
     function calculateScore() {
         //... code for calculating the score
         let score =0;
         document.querySelectorAll("[id^='question-']").forEach((questionDiv,index)=>{
-            const selectedAnswer = questionDiv.querySelector(`input[name="answer${index}"]:checked`).value;
-            const isFlag = selectedAnswer.hasAttribute("data-correct");
-            if(isFlag){
-                score ++;
+            const selectedAnswer = questionDiv.querySelector(`input[name="answer${index}"]:checked`);
+            
+            if(selectedAnswer){
+                const isFlag = selectedAnswer.hasAttribute("data-correct");
+                if(isFlag){
+                    score ++;
+                }
             }
         })
         return score;
     }
     function displayScores() {
         //... code for displaying scores from localStorage
-        const name = getCookie("username");
-        const score = localStorage.getItem(name);
+        tbodyNode.innerHTML = "";
 
-        const tbodyNode = document.querySelector("#score-table tbody");
-        const newRow = document.createElement("tr");
-        const usernameCell = document.createElement("th");
-        usernameCell.textContent = name;
-        const scoreCell = document.createElement("th");
-        scoreCell.textContent = score;
-        // Append the cells to the row
-        newRow.appendChild(usernameCell);
-        newRow.appendChild(scoreCell);
-        // Append the row to the table body
-        tbodyNode.appendChild(newRow);
+        for(let i=0; i< localStorage.length; i++){
+            const username = localStorage.key(i);
+            const scores = JSON.parse(localStorage.getItem(username)) || [];
+            
+            scores.forEach(score =>{
+                const newRow = document.createElement("tr");
+                const usernameCell = document.createElement("td");
+                usernameCell.textContent = username;
+                const scoreCell = document.createElement("td");
+                scoreCell.textContent = score;
+                // Append the cells to the row
+                newRow.appendChild(usernameCell);
+                newRow.appendChild(scoreCell);
+                // Append the row to the table body
+                tbodyNode.appendChild(newRow);
+            })
+            
+        }
+      
     }
 });
