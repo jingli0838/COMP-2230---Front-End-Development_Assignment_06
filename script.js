@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     checkUsername(); //Uncomment once completed
     fetchQuestions();
     displayScores();
+    calculateScore();
 
     /**
      * Fetches trivia questions from the API and displays them.
@@ -53,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
         questionContainer.innerHTML = ""; // Clear existing questions
         questions.forEach((question, index) => {
             const questionDiv = document.createElement("div");
+            questionDiv.id = `quesion-${index}`;// Add an ID for each questionDiv
             questionDiv.innerHTML = `
                 <p>${question.question}</p>
                 ${createAnswerOptions(
@@ -161,6 +163,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     function calculateScore() {
         //... code for calculating the score
+        let score =0;
+        document.querySelectorAll("[id^='question-']").forEach((questionDiv,index)=>{
+            const selectedAnswer = questionDiv.querySelector(`input[name="answer${index}"]:checked`).value;
+            const isFlag = selectedAnswer.hasAttribute("data-correct");
+            if(isFlag){
+                score ++;
+            }
+
+        })
     }
     function displayScores() {
         //... code for displaying scores from localStorage
