@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const questionContainer = document.getElementById("question-container");
     const newPlayerButton = document.getElementById("new-player");
     const userNameInput = document.getElementById("username");
-
+    const tbodyNode = document.querySelector("#score-table tbody");
     // Initialize the game
     checkUsername(); //Uncomment once completed
     fetchQuestions();
@@ -110,18 +110,21 @@ document.addEventListener("DOMContentLoaded", function () {
         //... form submission logic including setting cookies and calculating score
 
         nameValue = userNameInput.value;
-        value = calculateScore();
         checkUsername();
         const username = getCookie("username");
         if(!username){
-            setCookie("username",nameValue,30);
+            //Calls setCookie if no username cookie is found
+            setCookie("username",nameValue,1);
         };
-        
-        fetchQuestions();
+        //Calculates the current score with calculateScore
         const score = calculateScore();
+        //Saves the score with saveScore.
         saveScore(getCookie("username"), score);
         displayScores();
-
+        // Checks for the username cookie again with checkUsername to adjust the UI accordingly.
+        checkUsername();
+        // Fetches new questions by calling fetchQuestions for another round.
+        fetchQuestions();
 
     }
     function checkUsername() {
@@ -166,6 +169,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     function newPlayer() {
         //... code for clearing the username cookie and updating the UI
+        value = getCookie("username");
+        setCookie("username", value, -1);
+        localStorage.removeItem(getCookie("username"));
+        tbodyNode.innerHTML="";
+        checkUsername();
     }
     function calculateScore() {
         //... code for calculating the score
@@ -184,7 +192,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const name = getCookie("username");
         const score = localStorage.getItem(name);
 
-        const tbodyNode = document.querySelector("#score-table tbody");
         const newRow = document.createElement("tr");
         const usernameCell = document.createElement("th");
         usernameCell.textContent = name;
