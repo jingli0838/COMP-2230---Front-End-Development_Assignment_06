@@ -105,17 +105,26 @@ document.addEventListener("DOMContentLoaded", function () {
     function handleFormSubmit(event) {
         event.preventDefault();
         //... form submission logic including setting cookies and calculating score
-        username = userNameInput.value;
+
+        nameValue = userNameInput.value;
         value = calculateScore();
-        setCookie(username,value,30);
-        getCookie(username);
         checkUsername();
+        if(!getCookie("username")){
+            setCookie("username",nameValue,30);
+        };
+        
+       fetchQuestions();
+       
     }
     function checkUsername() {
-        //... code for checking if a username cookie is set and adjusting the UI  
-        if(getCookie(userName)){
+        //... code for checking if a username cookie is set and adjusting the UI 
+
+        if(getCookie("username")){
             userNameInput.classList.add("hidden");
             newPlayerButton.classList.remove("hidden");
+        }else{
+            userNameInput.classList.remove("hidden");
+            newPlayerButton.classList.add("hidden")
         }
     }
 
@@ -129,6 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         document.cookie =`${name}=${value}${expires}`;
     }
+
     function getCookie(name) {
         //... code for retrieving a cookie
         const cookieString = document.cookie;
