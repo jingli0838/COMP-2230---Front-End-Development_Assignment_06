@@ -11,7 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
     checkUsername(); //Uncomment once completed
     fetchQuestions();
     displayScores();
-    calculateScore();
+   
+
 
     /**
      * Fetches trivia questions from the API and displays them.
@@ -111,12 +112,17 @@ document.addEventListener("DOMContentLoaded", function () {
         nameValue = userNameInput.value;
         value = calculateScore();
         checkUsername();
-        if(!getCookie("username")){
+        const username = getCookie("username");
+        if(!username){
             setCookie("username",nameValue,30);
         };
         
-       fetchQuestions();
-       
+        fetchQuestions();
+        const score = calculateScore();
+        saveScore(getCookie("username"), score);
+        displayScores();
+
+
     }
     function checkUsername() {
         //... code for checking if a username cookie is set and adjusting the UI 
@@ -170,10 +176,24 @@ document.addEventListener("DOMContentLoaded", function () {
             if(isFlag){
                 score ++;
             }
-
         })
+        return score;
     }
     function displayScores() {
         //... code for displaying scores from localStorage
+        const name = getCookie("username");
+        const score = localStorage.getItem(name);
+
+        const tbodyNode = document.querySelector("#score-table tbody");
+        const newRow = document.createElement("tr");
+        const usernameCell = document.createElement("th");
+        usernameCell.textContent = name;
+        const scoreCell = document.createElement("th");
+        scoreCell.textContent = score;
+        // Append the cells to the row
+        newRow.appendChild(usernameCell);
+        newRow.appendChild(scoreCell);
+        // Append the row to the table body
+        tbodyNode.appendChild(newRow);
     }
 });
