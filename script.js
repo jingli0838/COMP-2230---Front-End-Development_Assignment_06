@@ -125,8 +125,8 @@ document.addEventListener("DOMContentLoaded", function () {
         checkUsername();
         // Fetches new questions by calling fetchQuestions for another round.
         fetchQuestions();
-
     }
+
     function checkUsername() {
         //... code for checking if a username cookie is set and adjusting the UI 
         const username = getCookie("username");
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
             newPlayerButton.classList.remove("hidden");
         }else{
             userNameInput.classList.remove("hidden");
-            newPlayerButton.classList.add("hidden")
+            newPlayerButton.classList.add("hidden");
         }
     }
 
@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if(days){
             const date = new Date();
             date.setTime(date.getTime()+days*24*60*60*1000);
-            expires = `;expires=${date.toUTCString()}`
+            expires = `;expires=${date.toUTCString()}`;
         }
         document.cookie =`${name}=${value}${expires}`;
     }
@@ -163,6 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     }
+
     function saveScore(username, score) {
          // Retrieve the existing scores for the username, or initialize a new array if none exist
         const existingScores = JSON.parse(localStorage.getItem(username)||"[]");
@@ -172,13 +173,15 @@ document.addEventListener("DOMContentLoaded", function () {
         // Save the updated array back to localStorage
         localStorage.setItem(username, JSON.stringify(existingScores));
     }
+
     function newPlayer() {
         //... code for clearing the username cookie and updating the UI
-        
+        // clear cookie
         setCookie("username", "", -1);
         checkUsername();  
         console.log("New player initialized. Username cookie cleared.");
     }
+
     function calculateScore() {
         //... code for calculating the score
         let score =0;
@@ -194,10 +197,12 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         return score;
     }
+
     function displayScores() {
         //... code for displaying scores from localStorage
+        // clear the tbodyNode
         tbodyNode.innerHTML = "";
-
+        // display all the scores in the localstorage
         for(let i=0; i< localStorage.length; i++){
             const username = localStorage.key(i);
             const scores = JSON.parse(localStorage.getItem(username)||"[]");
