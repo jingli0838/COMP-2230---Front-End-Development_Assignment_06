@@ -7,12 +7,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const newPlayerButton = document.getElementById("new-player");
     const userNameInput = document.getElementById("username");
     const tbodyNode = document.querySelector("#score-table tbody");
+    const submitButton = document.getElementById("submit-game");
     // Initialize the game
     checkUsername(); //Uncomment once completed
     fetchQuestions();
     displayScores();
    
-
 
     /**
      * Fetches trivia questions from the API and displays them.
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then((data) => {
                 displayQuestions(data.results);
                 showLoading(false); // Hide loading state
-                console.log(data.results)
+                console.log(data.results);
             })
             .catch((error) => {
                 console.error("Error fetching questions:", error);
@@ -109,7 +109,11 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
         //... form submission logic including setting cookies and calculating score
 
-        const nameValue = userNameInput.value;
+        const nameValue = userNameInput.value.trim();
+        if(!nameValue){
+            alert("Please enter your name before submitting");
+            return;
+        }
         checkUsername();
         const username = getCookie("username");
         if(!username){
@@ -132,9 +136,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const username = getCookie("username");
         if(username){
             userNameInput.classList.add("hidden");
+            submitButton.classList.add("hidden");
             newPlayerButton.classList.remove("hidden");
         }else{
             userNameInput.classList.remove("hidden");
+            submitButton.classList.remove("hidden");
             newPlayerButton.classList.add("hidden");
         }
     }
@@ -178,7 +184,9 @@ document.addEventListener("DOMContentLoaded", function () {
         //... code for clearing the username cookie and updating the UI
         // clear cookie
         setCookie("username", "", -1);
+        console.log(`Cookies:${document.cookie}`);
         checkUsername();  
+        userNameInput.value="";
         console.log("New player initialized. Username cookie cleared.");
     }
 
